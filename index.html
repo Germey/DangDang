@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+</head>
+<body>
+<div id="app" class="app">
+  <el-row>
+    <el-col :span="18" :offset="3">
+      <el-row>
+        <el-col :span="24" v-for="book in books" class="col">
+          <div class="item" :ref="book.name">
+            <div class="cover">
+              <img :src="'covers/' + book.name + '.jpg'">
+            </div>
+            <div class="info">
+              <p class="name">
+                {{ book.name }}
+              </p>
+              <p class="author">
+                作者：{{ book.author }}
+              </p>
+              <p class="date">
+                出版时间：{{ book.date }}
+              </p>
+              <p class="score" v-show="book.score !== '新书'">
+                豆瓣评分：{{ book.score }}
+              </p>
+            </div>
+            <div class="qrcode">
+              <img :src="'qrcodes/' + book.name + '.jpeg'">
+            </div>
+          </div>
+          <div class="btn">
+            <el-button @click="onDownload(book.name)" size="mini">下载</el-button>
+          </div>
+        </el-col>
+      </el-row>
+      <el-row>
+        <el-col>
+          <div class="btn">
+            <el-button @click="onDownloadAll" size="mini">下载全部</el-button>
+          </div>
+        </el-col>
+      </el-row>
+    </el-col>
+  </el-row>
+</div>
+</body>
+<script src="https://unpkg.com/vue/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js"></script>
+<script>
+  new Vue({
+    el: '#app',
+    data: function() {
+      return {
+        visible: false,
+        width: 1080,
+        height: 330,
+        quality: 1,
+        books: [
+          {
+            "name": "Python编程：从入门到实践",
+            "author": "[美] 埃里克·马瑟斯",
+            "score": "9.1",
+            "date": "2016-7-1"
+          },
+          {
+            "name": "Python基础教程（第3版）",
+            "author": "[挪] 海特兰德",
+            "score": "8.0",
+            "date": "2018-2-1"
+          },
+          {
+            "name": "Python编程快速上手",
+            "author": "[美] 思维加特",
+            "score": "9.0",
+            "date": "2016-7-1"
+          },
+          {
+            "name": "笨办法学Python3",
+            "author": "[美] 泽德",
+            "score": "8.4",
+            "date": "2018-6-1"
+          },
+          {
+            "name": "流畅的Python",
+            "author": "[巴西] 拉马略",
+            "score": "9.4",
+            "date": "2017-5-15"
+          },
+          {
+            "name": "Python Cookbook 中文版",
+            "author": "[美] 比斯利",
+            "score": "9.2",
+            "date": "2015-5-1"
+          },
+          {
+            "name": "Effective Python",
+            "author": "[美] 斯拉特金",
+            "score": "9.0",
+            "date": "2016-1-18"
+          },
+          {
+            "name": "Python编程之美",
+            "author": "[美] 肯尼思·赖茨 Kenneth Reitz",
+            "score": "8.4",
+            "date": "2018-8-1"
+          },
+          {
+            "name": "Python高性能编程",
+            "author": "[美] 戈雷利克",
+            "score": "7.2",
+            "date": "2017-7-1"
+          },
+          {
+            "name": "Python网络爬虫权威指南（第2版）",
+            "author": "[美] 米切尔",
+            "score": "新书",
+            "date": "2019-4-1"
+          },
+          {
+            "name": "Python3网络爬虫开发实战",
+            "author": "崔庆才",
+            "score": "9.0",
+            "date": "2018-4-1"
+          },
+          {
+            "name": "利用Python进行数据分析（第2版）",
+            "author": "[美] 麦金尼",
+            "score": "8.5",
+            "date": "2018-7-30"
+          },
+          {
+            "name": "对比Excel，轻松学习Python数据分析",
+            "author": "张俊红",
+            "score": "7.8",
+            "date": "2019-2-1"
+          },
+          {
+            "name": "Python数据分析与挖掘实战",
+            "author": "张良均",
+            "score": "7.8",
+            "date": "2016-1-1"
+          },
+          {
+            "name": "统计学习方法（第2版）",
+            "author": "李航",
+            "score": "9.5",
+            "date": "2018-5-5"
+          },
+          {
+            "name": "白话深度学习与TensorFlow",
+            "author": "高扬",
+            "score": "7.1",
+            "date": "2017-7-31"
+          },
+          {
+            "name": "机器学习",
+            "author": "周志华",
+            "score": "8.7",
+            "date": "2016-1-1"
+          },
+          {
+            "name": "Python机器学习基础教程",
+            "author": "[德] 穆勒",
+            "score": "8.2",
+            "date": "2018-1-1"
+          },
+          {
+            "name": "Python深度学习",
+            "author": "[美] 肖莱",
+            "score": "9.6",
+            "date": "2018-8-1"
+          },
+          {
+            "name": "Python神经网络编程",
+            "author": "[英] 拉希德",
+            "score": "9.0",
+            "date": "2018-4-1"
+          },
+          {
+            "name": "你不知道的JavaScript",
+            "author": "[美] 辛普森",
+            "score": "9.3",
+            "date": "2018-1-1"
+          },
+          {
+            "name": "深入浅出Vue.js",
+            "author": "刘博文",
+            "score": "新书",
+            "date": "2018-3-1"
+          },
+          {
+            "name": "Django企业开发实战",
+            "author": "胡阳",
+            "score": "7.7",
+            "date": "2019-2-1"
+          },
+          {
+            "name": "Flask Web开发（第2版）",
+            "author": "[美] 格雷贝格",
+            "score": "9.4",
+            "date": "2018-8-1"
+          },
+          {
+            "name": "深入浅出Docker",
+            "author": "[英] 波尔顿",
+            "score": "8.4",
+            "date": "2019-4-1"
+          },
+          {
+            "name": "深入理解Kafka",
+            "author": "朱忠华",
+            "score": "新书",
+            "date": "2019-1-1"
+          },
+          {
+            "name": "Kubernetes权威指南（第4版）",
+            "author": "龚正",
+            "score": "新书",
+            "date": "2018-5-1"
+          },
+          {
+            "name": "集体智慧编程",
+            "author": "西格兰",
+            "score": "9.0",
+            "date": "2015-3-1"
+          },
+          {
+            "name": "程序员的数学",
+            "author": "[日] 结城浩",
+            "score": "8.6",
+            "date": "2016-6-25"
+          },
+          {
+            "name": "程序员修炼之道",
+            "author": "[美] 亨特",
+            "score": "8.6",
+            "date": "2011-1-1"
+          },
+          {
+            "name": "代码整洁之道",
+            "author": "[美] 罗伯特",
+            "score": "8.6",
+            "date": "2016-9-1"
+          },
+          {
+            "name": "持续交付2.0",
+            "author": "乔梁",
+            "score": "9.4",
+            "date": "2019-1-1"
+          },
+          {
+            "name": "鸟哥的Linux私房菜（第4版）",
+            "author": "鸟哥",
+            "score": "8.0",
+            "date": "2018-11-1"
+          },
+          {
+            "name": "颈椎病康复指南",
+            "author": "陈选宁",
+            "score": "8.6",
+            "date": "2012-4-1"
+          }
+        ],
+      }
+    },
+    methods: {
+      onDownload(name) {
+        domtoimage.toJpeg(this.$refs[name][0], {
+          quality: this.quality,
+          width: this.width,
+          height: this.height
+        }).then(function(dataUrl) {
+          var link = document.createElement('a')
+          link.download = name + '.png'
+          link.href = dataUrl
+          link.click()
+        })
+      },
+      onDownloadAll() {
+        this.books.forEach((book) => {
+          domtoimage.toJpeg(this.$refs[book.name][0], {
+            quality: this.quality,
+            width: this.width,
+            height: this.height
+          }).then(function(dataUrl) {
+            var link = document.createElement('a')
+            link.download = book.name + '.png'
+            link.href = dataUrl
+            link.click()
+          })
+        })
+      }
+    }
+  })
+</script>
+<style>
+  body, html {
+    padding: 0;
+    margin: 0;
+  }
+
+  .app {
+    padding-top: 30px;
+    background: #EEE;
+    height: 100vh;
+  }
+
+  .col {
+    padding-top: 15px;
+  }
+
+  .item {
+    width: 1080px;
+    height: 330px;
+    overflow: hidden;
+    background: white;
+    position: relative;
+  }
+
+  .btn {
+    text-align: center;
+  }
+
+  .item .cover {
+    width: 23%;
+    left: 0;
+    position: relative;
+    height: 100%;
+  }
+
+  .item .info {
+    position: absolute;
+    left: 23%;
+    width: 47%;
+    top: 0;
+    padding: 30px;
+    padding-top: 15px;
+  }
+
+  .item .info p {
+    margin-top: 0;
+    margin-bottom: 9px;
+  }
+
+  .item .info .name {
+    color: #333;
+    font-size: 45px;
+    font-weight: 500;
+  }
+
+  .item .info .author {
+    font-size: 36px;
+    font-weight: 200;
+  }
+
+  .item .info .score {
+    font-size: 36px;
+    font-weight: 200;
+  }
+
+  .item .info .date {
+    font-size: 36px;
+    font-weight: 200;
+  }
+
+  .item .cover img {
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+  }
+
+  .item .qrcode {
+    width: 27%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    overflow: hidden;
+  }
+
+  .item .qrcode img {
+    width: 1200px;
+    position: relative;
+    left: -900px;
+    top: -1350px;
+  }
+</style>
+</html>
